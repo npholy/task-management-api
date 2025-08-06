@@ -1,0 +1,81 @@
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImVtYWlsIjoiZm9saWtpYUBnbWFpbC5jb20iLCJpYXQiOjE3NTQ1MDQ3ODQsImV4cCI6MTc1NDUxMTk4NH0.l02gcIFXk-l8maXMcvVuDUEXdfmP8L-cLcuVt2nb4LE
+
+
+### Register New User
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "folikia",
+  "email": "folikia@gmail.com",
+  "password": "password123"
+}
+
+### Login to Get JWT
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "folikia@gmail.com",
+  "password": "password123"
+}
+
+
+### Create Category
+POST http://localhost:3000/api/categories
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Work"
+}
+
+### Create Task
+POST http://localhost:3000/api/tasks
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Finish API project",
+  "description": "Complete the Task Management API for Week 6",
+  "status": "TODO",
+  "categoryId": 1
+}
+
+### List Tasks
+GET http://localhost:3000/api/tasks
+Authorization: Bearer {{token}}
+
+### Filter Tasks by Status
+GET http://localhost:3000/api/tasks?status=TODO
+Authorization: Bearer {{token}}
+
+### Update Task
+PUT http://localhost:3000/api/tasks/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "Updated API project",
+  "description": "Updated description",
+  "status": "IN_PROGRESS",
+  "categoryId": 1
+}
+
+### Delete Task
+DELETE http://localhost:3000/api/tasks/1
+Authorization: Bearer {{token}}
+
+### Logout
+POST http://localhost:3000/api/auth/logout
+Content-Type: application/json
+
+{}
+
+### Reset Database
+POST http://localhost:3000/api/auth/reset
+Content-Type: application/json
+
+{
+  "confirm": true
+}

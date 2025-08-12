@@ -12,10 +12,10 @@ export const loginSchema = z.object({
 });
 
 export const taskSchema = z.object({
-    title: z.string().min(3).max(100),
-    description: z.string().max(1000).optional().nullable(),
-    status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).default('TODO'),
-    categoryId: z.number().int().positive().optional().nullable(),
+    title: z.string().min(1, 'Title is required').optional(),
+    description: z.string().optional(),
+    status: z.enum(['TODO', 'IN_PROGRESS', 'DONE']).optional(),
+    categoryId: z.number().int().positive('Invalid category ID').optional(),
 });
 
 export const categorySchema = z.object({

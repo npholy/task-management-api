@@ -1,26 +1,40 @@
-import { prisma } from '@/lib/prisma';
-import { verifyToken } from '@/middleware/auth';
-import { handleError } from '@/utils/errorhandler';
-import { categorySchema } from '@/utils/validate';
-import { z } from 'zod'; // Add this import
+import { z } from 'zod';
+import prisma from '../../../lib/prisma.js';
+import { verifyToken } from '../../../middleware/auth.js';
+import { handleError } from '../../../utils/errorhandler';
+import { categorySchema } from '../../../utils/validate';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return handleError(req, res, new Error('Method not allowed'), 'Method not allowed, use POST', 405);
-  }
-  return verifyToken(req, res, async () => {
+async function handler(req, res) {
+  if (req.method === 'POST') {
     try {
-      const { name } = categorySchema.parse(req.body);
-      const existingCategory = await prisma.category.findUnique({ where: { name } });
-      if (existingCategory) {
-        return handleError(req, res, new Error('Category exists'), 'Category already exists', 409);
+      if (!req.user || !req.user.id) {
+        return res.status(401).json({ message: 'User not authenticated' });
       }
+
+      const { name } = categorySchema.parse(req.body);
+
       const category = await prisma.category.create({
-        data: { name, userId: req.user.userId },
+        data: {
+          name,
+          user: {
+            connect: { id: req.user.id },
+          },
+        },
       });
+
       return res.status(201).json(category);
     } catch (error) {
-      return handleError(req, res, error, error instanceof z.ZodError ? 'Invalid category data' : 'Failed to create category', error instanceof z.ZodError ? 400 : 500);
+      return handleError(
+        req,
+        res,
+        error,
+        error instanceof z.ZodError ? 'Invalid category data' : 'Failed to create category',
+        error instanceof z.ZodError ? 400 : 500
+      );
     }
-  });
+  } else {
+    return handleError(req, res, new Error('Method not allowed'), 'Method not allowed, use POST', 405);
+  }
 }
+
+export default verifyToken(handler);

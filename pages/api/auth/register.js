@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import prisma from '@/lib/prisma';
 import { handleError } from '@/utils/errorhandler';
 import { registerSchema } from '@/utils/validate';
 import bcrypt from 'bcrypt';
@@ -22,6 +22,12 @@ export default async function handler(req, res) {
     const token = generateToken(user);
     return res.status(201).json({ message: 'User registered successfully', token });
   } catch (error) {
-    return handleError(req, res, error, error instanceof z.ZodError ? 'Invalid user data' : 'Failed to register user', error instanceof z.ZodError ? 400 : 500);
+    return handleError(
+      req,
+      res,
+      error,
+      error instanceof z.ZodError ? 'Invalid user data' : 'Failed to register user',
+      error instanceof z.ZodError ? 400 : 500
+    );
   }
 }
